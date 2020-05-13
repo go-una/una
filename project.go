@@ -7,13 +7,9 @@ import (
 	"github.com/go-una/una/tools"
 )
 
-type ProjectOptions struct {
-	Name     string
-	RootPath string
-}
-
 var (
 	ProjectName = ""
+	ModuleName  = ""
 	RootPath    = ""
 	ConfigPath  = ""
 	LogsPath    = ""
@@ -24,6 +20,7 @@ var (
 
 func Setup(options ProjectOptions) {
 	ProjectName = options.Name
+	ModuleName = options.Module
 	RootPath = options.RootPath
 
 	isRootPathExist, isRootPathDir := tools.FileExists(RootPath)
@@ -32,6 +29,11 @@ func Setup(options ProjectOptions) {
 	}
 	if !isRootPathDir {
 		panic(fmt.Sprintf("RootPath (%s) is not a directory", RootPath))
+	}
+
+	// env
+	if options.Env == "" {
+		options.Env = "prod"
 	}
 
 	ConfigPath = RootPath + "/config"
@@ -51,4 +53,17 @@ func Setup(options ProjectOptions) {
 			}
 		}
 	}
+
+	if options.LoggerOptions != nil {
+		setupLogger(options.LoggerOptions)
+	}
+	if options.AccessLoggerOptions != nil {
+		setupAccessLogger(options.AccessLoggerOptions)
+	}
+
+	configFilename := options.ConfigFilename
+	if configFilename == "" {
+		configFilename = fmt.Sprintf("%s/app.%s.toml", ConfigPath, options.Env)
+	}
+	SetupConfig(configFilename, options.Config)
 }
