@@ -7,7 +7,6 @@ import (
 	"os/signal"
 	"reflect"
 	"syscall"
-	"time"
 )
 
 var (
@@ -32,11 +31,7 @@ func SetupConfig(filename string, conf interface{}) {
 }
 
 func parseConfig() error {
-	err := Parse(configFilename, appConf)
-	if err == nil {
-		parseTime = time.Now().Unix()
-	}
-	return err
+	return Parse(configFilename, appConf)
 }
 
 func ReloadConfigHandler() {
