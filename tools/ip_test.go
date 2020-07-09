@@ -1,6 +1,7 @@
 package tools
 
 import (
+	"net"
 	"testing"
 )
 
@@ -40,5 +41,32 @@ func TestIP2LongInvalid(t *testing.T) {
 	l5 := IP2Long("192.168.0.x")
 	if l5 != 0 {
 		t.Fatalf("ip2long expect %d, actual %d", 0, l5)
+	}
+}
+
+func TestIPInRange(t *testing.T) {
+	ipRangeList := []string{
+		"127.0.0.1",
+		"192.168.11.0/24",
+	}
+
+	ipStr1 := "127.0.0.1"
+	if !IPInRange(net.ParseIP(ipStr1), ipRangeList) {
+		t.Fatalf("IPInRange: %s expect in range, actual not", ipStr1)
+	}
+
+	ipStr2 := "192.168.11.95"
+	if !IPInRange(net.ParseIP(ipStr2), ipRangeList) {
+		t.Fatalf("IPInRange: %s expect in range, actual not", ipStr2)
+	}
+
+	ipStr3 := "192.168.0.1"
+	if IPInRange(net.ParseIP(ipStr3), ipRangeList) {
+		t.Fatalf("IPInRange: %s expect not in range, actual in range", ipStr3)
+	}
+
+	ipStr4 := "223.5.5.5"
+	if IPInRange(net.ParseIP(ipStr4), ipRangeList) {
+		t.Fatalf("IPInRange: %s expect not in range, actual in range", ipStr4)
 	}
 }
