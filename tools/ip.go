@@ -42,3 +42,26 @@ func IPInRange(ip net.IP, ipRangeList []string) bool {
 	}
 	return inRange
 }
+
+// 获取本机内网 IP
+func GetInternalIPv4() (net.IP, error) {
+	addrList, err := net.InterfaceAddrs()
+	if err != nil {
+		return nil, err
+	}
+
+	internalIpRangeList := []string{
+		"10.0.0.0/8",
+		"172.16.0.0/12",
+		"192.168.0.0/16",
+	}
+
+	ip := net.ParseIP("127.0.0.1")
+	for _, a := range addrList {
+		ipNet, ok := a.(*net.IPNet)
+		if ok && !ipNet.IP.IsLoopback() && ipNet.IP.To4() != nil && IPInRange(ipNet.IP, internalIpRangeList) {
+			ip = ipNet.IP
+		}
+	}
+	return ip, nil
+}

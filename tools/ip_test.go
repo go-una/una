@@ -1,6 +1,7 @@
 package tools
 
 import (
+	"log"
 	"net"
 	"testing"
 )
@@ -69,4 +70,12 @@ func TestIPInRange(t *testing.T) {
 	if IPInRange(net.ParseIP(ipStr4), ipRangeList) {
 		t.Fatalf("IPInRange: %s expect not in range, actual in range", ipStr4)
 	}
+}
+
+func TestGetInternalIPv4(t *testing.T) {
+	ip, err := GetInternalIPv4()
+	if err != nil {
+		t.Fatal(err)
+	}
+	log.Println("internal ip:", ip)
 }
